@@ -1,4 +1,5 @@
-use super::*;
+use super::{Value, VioType, VioTable};
+use super::super::VioBase;
 
 impl std::fmt::Display for VioType {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
