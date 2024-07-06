@@ -1,0 +1,10 @@
+[package]
+name = "viobase"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "viobase"
+
+[dependencies]
+flate2 = "1.0.30"
