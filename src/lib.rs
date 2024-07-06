@@ -62,16 +62,16 @@ impl VioBase {
         let mut last_table: VioTable = VioTable::new();
 
         for line in contents.lines() {
-            if line.starts_with("Viobase name: ") {
-                vb = VioBase { name: line[14..].to_string(), tables: vec![] };
-            } 
-            else if line.starts_with("Table name: ") {                
-                last_table.name = line[12..].to_string();
+            if let Some(stripped) = line.strip_prefix("Viobase name: ") {
+                vb = VioBase { name: stripped.to_string(), tables: vec![] };
+            }
+            else if let Some(stripped) = line.strip_prefix("Table name: ") {
+                last_table.name = stripped.to_string();
             } 
             else if line.starts_with("id") {
                 let cols_str = line.split(',').collect::<Vec<&str>>();
-                for i in 0..cols_str.len() {
-                    let col_str = cols_str[i].split(' ').collect::<Vec<&str>>();
+                for item in &cols_str {
+                    let col_str = item.split(' ').collect::<Vec<&str>>();
                     let colname = col_str[0];
                     let colty = col_str[1];
                     match colty {
@@ -95,14 +95,14 @@ impl VioBase {
             else {
                 let row_str = line.split(',').collect::<Vec<&str>>();
                 let mut row_values = vec![];
-                for colid in 0..last_table.cols.len() {
-                    match last_table.cols[colid].ty {
-                        VioType::Bool => row_values.push(Value::Bool(row_str[colid].parse::<bool>().unwrap())),
-                        VioType::String => row_values.push(Value::String(row_str[colid].to_string())),
-                        VioType::Int => row_values.push(Value::Int(row_str[colid].parse::<i32>().unwrap())),
-                        VioType::Float => row_values.push(Value::Float(row_str[colid].parse::<f32>().unwrap())),
-                        VioType::Long => row_values.push(Value::Long(row_str[colid].parse::<i64>().unwrap())),
-                        VioType::Double => row_values.push(Value::Double(row_str[colid].parse::<f64>().unwrap())),                        
+                for (id, item) in row_str.iter().enumerate().take(last_table.cols.len()) {                
+                    match last_table.cols[id].ty {
+                        VioType::Bool => row_values.push(Value::Bool(item.parse::<bool>().unwrap())),
+                        VioType::String => row_values.push(Value::String(item.to_string())),
+                        VioType::Int => row_values.push(Value::Int(item.parse::<i32>().unwrap())),
+                        VioType::Float => row_values.push(Value::Float(item.parse::<f32>().unwrap())),
+                        VioType::Long => row_values.push(Value::Long(item.parse::<i64>().unwrap())),
+                        VioType::Double => row_values.push(Value::Double(item.parse::<f64>().unwrap())),                        
                     }
                 }
                 last_table.add_row(row_values);

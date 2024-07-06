@@ -74,3 +74,9 @@ impl VioTable {
         None
     }
 }
+
+impl Default for VioTable {
+    fn default() -> Self {
+        Self::new()
+    }
+}
