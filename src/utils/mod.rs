@@ -20,6 +20,19 @@ pub enum Value {
     Double(f64),
 }
 
+impl Value {
+    pub fn to_owned(&self) -> Value {
+        match self {
+            Value::Bool(v) => Value::Bool(*v),
+            Value::String(v) => Value::String(v.to_string()),
+            Value::Int(v) => Value::Int(*v),
+            Value::Float(v) => Value::Float(*v),
+            Value::Long(v) => Value::Long(*v),
+            Value::Double(v) => Value::Double(*v),
+        }
+    }
+}
+
 pub struct Row {
     pub index: usize,
     pub values: Vec<Value>,
@@ -63,11 +76,15 @@ impl VioTable {
         self
     }
 
-    pub fn get(&self, val_name: &str, pair: Value) -> Option<&Vec<Value>> {
+    pub fn get(&self, val_name: &str, pair: Value) ->  Option<Vec<Value>> {
         if let Some(col_i) = self.cols.iter().position(|i| i.name == val_name) {
             for row in &self.rows {
                 if row.values[col_i] == pair {
-                    return Some(&row.values);
+                    let mut vals:Vec<Value> = vec![];
+                    for val in &row.values {
+                        vals.push(val.to_owned());
+                    }
+                    return Some(vals);
                 }
             }
         }
